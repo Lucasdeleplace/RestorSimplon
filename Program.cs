@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ClientsDb>(opt => opt.UseSqlite("Data Source=RestoSimplon.db"));
@@ -7,6 +7,8 @@ var app = builder.Build();
 
 // ------ Route Client ------ //
 RouteGroupBuilder clients = app.MapGroup("/clients");
+
+RouteGroupBuilder items = app.MapGroup("/items");
 
 clients.MapGet("/", GetAllClients);
 
@@ -17,7 +19,21 @@ clients.MapPost("/", CreateClients);
 clients.MapPut("/{id}", UpdateClients);
 
 clients.MapDelete("/{id}", DeleteClients);
+
+// ------ Route Items ------ //
+
+items.MapGet("/", GetAllItems);
+
+items.MapGet("/{id}", GetItemsbyId);
+
+items.MapPost("/", CreateItems);
+
+items.MapPut("/{id}", UpdateItems);
+
+items.MapDelete("/{id}", DeleteItems);
+
 app.Run();
+
 static async Task<IResult> GetAllClients(ClientsDb db)
 {
     return TypedResults.Ok(await db.Clients.ToArrayAsync());
@@ -72,14 +88,6 @@ static async Task<IResult> DeleteClients(int id, ClientsDb db)
 
 // ------ Route Items ------ //
 
-RouteGroupBuilder items = app.MapGroup("/items");
-
-items.MapGet("/", GetAllItems);
-items.MapGet("/{id}", GetItemsbyId);
-items.MapPost("/", CreateItems);
-items.MapPut("/{id}", UpdateItems);
-items.MapDelete("/{id}", DeleteItems);
-app.Run();
 static async Task<IResult> GetAllItems(ClientsDb db)
 {
     return TypedResults.Ok(await db.Items.ToArrayAsync());
