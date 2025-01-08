@@ -28,3 +28,36 @@ Content-Type: application/json
 DELETE {{RestorSimplon_HostAddress}}/categories/2
 
 ###
+
+GET {{RestorSimplon_HostAddress}}/items
+
+###
+
+POST {{RestorSimplon_HostAddress}}/items
+Content-Type: application/json
+
+{
+    "Name":"Patate",
+    "Price": 4.99,
+    "Category":"Plat"
+}
+
+###
+
+GET {{RestorSimplon_HostAddress}}/items/4
+
+###
+
+PUT {{RestorSimplon_HostAddress}}/items/4
+Content-Type: application/json
+
+{
+    "Name":"Patate",
+    "Price": 8.99,
+    "Category":"Plat"
+}
+###
+
+DELETE {{RestorSimplon_HostAddress}}/items/3
+
+###

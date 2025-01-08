@@ -1,14 +1,14 @@
-using Microsoft.EntityFrameworkCore;
+ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ClientsDb>(opt => opt.UseSqlite("Data Source=RestoSimplon.db"));
 
 var app = builder.Build();
 
-
+// ------ Route Client ------ //
 RouteGroupBuilder clients = app.MapGroup("/clients");
 RouteGroupBuilder categories = app.MapGroup("/categories");
-// Route Client
+RouteGroupBuilder items = app.MapGroup("/items");
 
 clients.MapGet("/", GetAllClients);
 
@@ -19,7 +19,6 @@ clients.MapPost("/", CreateClients);
 clients.MapPut("/{id}", UpdateClients);
 
 clients.MapDelete("/{id}", DeleteClients);
-
 // Route category
 
 categories.MapGet("/", GetAllCategories);
@@ -31,9 +30,20 @@ categories.MapPost("/", CreateCategories);
 categories.MapPut("/{id}", UpdateCategories);
 
 categories.MapDelete("/{id}", DeleteCategories);
-app.Run();
 
-//Function 
+// ------ Route Items ------ //
+
+items.MapGet("/", GetAllItems);
+
+items.MapGet("/{id}", GetItemsbyId);
+
+items.MapPost("/", CreateItems);
+
+items.MapPut("/{id}", UpdateItems);
+
+items.MapDelete("/{id}", DeleteItems);
+
+app.Run();
 static async Task<IResult> GetAllClients(ClientsDb db)
 {
     return TypedResults.Ok(await db.Clients.ToArrayAsync());
@@ -83,7 +93,6 @@ static async Task<IResult> DeleteClients(int id, ClientsDb db)
 
     return TypedResults.NotFound();
 }
-
 // Function Categories
 
 static async Task<IResult> GetAllCategories(ClientsDb db)
@@ -124,6 +133,59 @@ static async Task<IResult> DeleteCategories(int id, ClientsDb db)
     if (await db.Categories.FindAsync(id) is Categories categories)
     {
         db.Categories.Remove(categories);
+        await db.SaveChangesAsync();
+        return TypedResults.NoContent();
+    }
+
+    return TypedResults.NotFound();
+}
+
+
+// ------ Route Items ------ //
+
+static async Task<IResult> GetAllItems(ClientsDb db)
+{
+    return TypedResults.Ok(await db.Items.ToArrayAsync());
+}
+static async Task<IResult> GetItemsbyId(int id, ClientsDb db)
+
+{
+    return await db.Items.FindAsync(id)
+        is Items items
+        ? TypedResults.Ok(items)
+        : TypedResults.NotFound();
+
+}
+
+static async Task<IResult> CreateItems(Items items, ClientsDb db)
+{
+    db.Items.Add(items);
+    await db.SaveChangesAsync();
+
+    return TypedResults.Created($"/items/{items.Id}", items);
+}
+
+static async Task<IResult> UpdateItems(int id, Items inputItems, ClientsDb db)
+{
+    var item = await db.Items.FindAsync(id);
+    Console.WriteLine(item);
+
+    if (item is null) return TypedResults.NotFound();
+
+    item.Name = inputItems.Name;
+    item.Price = inputItems.Price;
+    item.Category = inputItems.Category;
+
+    await db.SaveChangesAsync();
+
+    return TypedResults.NoContent();
+}
+
+static async Task<IResult> DeleteItems(int id, ClientsDb db)
+{
+    if (await db.Items.FindAsync(id) is Items items)
+    {
+        db.Items.Remove(items);
         await db.SaveChangesAsync();
         return TypedResults.NoContent();
     }
