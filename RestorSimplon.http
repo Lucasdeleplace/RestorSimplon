@@ -3,3 +3,18 @@
 GET {{RestorSimplon_HostAddress}}/clients
 
 ###
+
+GET {{RestorSimplon_HostAddress}}/items
+
+###
+
+POST {{RestorSimplon_HostAddress}}/items
+Content-Type: application/json
+
+{
+    "Name":"Patate",
+    "Price": 4.99,
+    "Category":"Plat"
+}
+
+###
