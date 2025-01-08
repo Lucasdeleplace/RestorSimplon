@@ -1,0 +1,5 @@
+﻿@RestorSimplon_HostAddress = https://localhost:7265
+
+GET {{RestorSimplon_HostAddress}}/clients
+
+###
