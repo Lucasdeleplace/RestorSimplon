@@ -1,5 +1,30 @@
 ﻿@RestorSimplon_HostAddress = https://localhost:7265
 
-GET {{RestorSimplon_HostAddress}}/clients
+GET {{RestorSimplon_HostAddress}}/categories
+
+###
+
+POST {{RestorSimplon_HostAddress}}/categories
+Content-Type: application/json
+
+{
+    "Category_Name":"Diner"
+}
+###
+
+GET {{RestorSimplon_HostAddress}}/categories/3
+
+###
+
+PUT {{RestorSimplon_HostAddress}}/categories/3
+Content-Type: application/json
+
+{
+    "Category_Name":"Boisson"
+}
+
+###
+
+DELETE {{RestorSimplon_HostAddress}}/categories/2
 
 ###
