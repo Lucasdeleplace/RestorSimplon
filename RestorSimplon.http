@@ -18,3 +18,21 @@ Content-Type: application/json
 }
 
 ###
+
+GET {{RestorSimplon_HostAddress}}/items/4
+
+###
+
+PUT {{RestorSimplon_HostAddress}}/items/4
+Content-Type: application/json
+
+{
+    "Name":"Patate",
+    "Price": 8.99,
+    "Category":"Plat"
+}
+###
+
+DELETE {{RestorSimplon_HostAddress}}/items/3
+
+###

@@ -113,8 +113,9 @@ static async Task<IResult> CreateItems(Items items, ClientsDb db)
 static async Task<IResult> UpdateItems(int id, Items inputItems, ClientsDb db)
 {
     var item = await db.Items.FindAsync(id);
+    Console.WriteLine(item);
 
-    if (item == null) return TypedResults.NotFound();
+    if (item is null) return TypedResults.NotFound();
 
     item.Name = inputItems.Name;
     item.Price = inputItems.Price;
