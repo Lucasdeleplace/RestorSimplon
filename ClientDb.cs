@@ -6,6 +6,7 @@ class ClientsDb : DbContext
     public DbSet<Clients> Clients => Set<Clients>();
     public DbSet<Categories> Categories => Set<Categories>();
     public DbSet<Items> Items => Set<Items>();
+    public DbSet<Order> Orders => Set<Order>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

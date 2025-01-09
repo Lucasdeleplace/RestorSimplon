@@ -38,3 +38,7 @@ GET {{RestorSimplon_HostAddress}}/items/2/with-category
 GET {{RestorSimplon_HostAddress}}/categories/{{id}}/with-items
 
 ###
+
+GET {{RestorSimplon_HostAddress}}/orders
+
+###

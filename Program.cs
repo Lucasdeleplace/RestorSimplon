@@ -24,6 +24,7 @@ app.UseEndpoints(endpoints =>
 RouteGroupBuilder clients = app.MapGroup("/clients");
 RouteGroupBuilder categories = app.MapGroup("/categories");
 RouteGroupBuilder items = app.MapGroup("/items");
+RouteGroupBuilder orders = app.MapGroup("/orders");
 
 clients.MapGet("/", GetAllClients);
 clients.MapGet("/{id}", GetClientbyId);
@@ -31,7 +32,7 @@ clients.MapPost("/", CreateClients);
 clients.MapPut("/{id}", UpdateClients);
 clients.MapDelete("/{id}", DeleteClients);
 
-// Route category
+// ------ Route Category ------ //
 categories.MapGet("/", GetAllCategories);
 categories.MapGet("/{id}", GetCategoriesbyId);
 categories.MapPost("/", CreateCategories);
@@ -46,6 +47,12 @@ items.MapPost("/", CreateItems);
 items.MapPut("/{id}", UpdateItems);
 items.MapDelete("/{id}", DeleteItems);
 items.MapGet("/{id}/with-category", GetItemWithCategory);
+
+// ------ Route Order ------ //   
+orders.MapGet("/", GetAllOrder);
+orders.MapGet("/{id}", GetOrderbyId);
+orders.MapPost("/", CreateOrder);
+orders.MapPut("/{id}", UpdateOrder);
 
 app.Run();
 
@@ -189,6 +196,49 @@ static async Task<IResult> DeleteItems(int id, ClientsDb db)
     if (await db.Items.FindAsync(id) is Items items)
     {
         db.Items.Remove(items);
+        await db.SaveChangesAsync();
+        return TypedResults.NoContent();
+    }
+    return TypedResults.NotFound();
+}
+
+// ------ Route Order ------ //
+static async Task<IResult> GetAllOrder(ClientsDb db)
+{
+    return TypedResults.Ok(await db.Orders.ToArrayAsync());
+}
+
+static async Task<IResult> GetOrderbyId(int id, ClientsDb db)
+{
+    return await db.Orders.FindAsync(id)
+        is Order order
+        ? TypedResults.Ok(order)
+        : TypedResults.NotFound();
+}
+
+static async Task<IResult> CreateOrder(Order order, ClientsDb db)
+{
+    db.Orders.Add(order);
+    await db.SaveChangesAsync();
+    return TypedResults.Created($"/orders/{order.Id}", order);
+}
+
+static async Task<IResult> UpdateOrder(int id, Order inputOrder, ClientsDb db)
+{
+    var order = await db.Orders.FindAsync(id);
+    if (order is null) return TypedResults.NotFound();
+    order.ClientId = inputOrder.ClientId;
+    order.ItemId = inputOrder.ItemId;
+    order.Quantity = inputOrder.Quantity;
+    await db.SaveChangesAsync();
+    return TypedResults.NoContent();
+}
+
+static async Task<IResult> DeleteOrder(int id, ClientsDb db)
+{
+    if (await db.Orders.FindAsync(id) is Order order)
+    {
+        db.Orders.Remove(order);
         await db.SaveChangesAsync();
         return TypedResults.NoContent();
     }
