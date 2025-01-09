@@ -1,6 +1,5 @@
 ﻿@RestorSimplon_HostAddress = https://localhost:7265
 
-
 GET {{RestorSimplon_HostAddress}}/categories
 
 ###
@@ -22,10 +21,11 @@ POST {{RestorSimplon_HostAddress}}/items
 Content-Type: application/json
 
 {
-  "Name" : "Frite",
+  "Name" : "Pates",
   "Price" : 1.70,
-  "CategoryId" : 2
+  "CategoryId" : 1
 }
+
 ###
 
 GET {{RestorSimplon_HostAddress}}/items/2/with-category
@@ -38,5 +38,49 @@ GET {{RestorSimplon_HostAddress}}/categories/{{id}}/with-items
 ###
 
 GET {{RestorSimplon_HostAddress}}/orders
+
+###
+
+POST {{RestorSimplon_HostAddress}}/orders
+Content-Type: application/json
+{
+  "ClientId": 1,
+  "ItemId": 2,
+  "Quantity": 2,
+  "Total": 3.40,
+  "Date": "2025-09-01T00:00:00",
+  "Status": false
+}
+
+###
+
+POST {{RestorSimplon_HostAddress}}/clients
+Content-Type: application/json
+{
+  "First_Name": "Jody",
+  "Last_Name": "Jody",
+  "Address": "12 rue de la paix",
+  "Phone_Number": "0607080910"
+}
+
+###
+
+PUT {{RestorSimplon_HostAddress}}/orders/1
+Content-Type: application/json
+{
+  "ClientId": 1,
+  "ItemId": 2,
+  "Quantity": 60,
+  "Total": 349.99,
+  "Date": "2025-09-01T00:00:00",
+  "Status": false
+}
+###
+
+DELETE {{RestorSimplon_HostAddress}}/orders/{{id}}
+
+###
+
+GET {{RestorSimplon_HostAddress}}/orders/1
 
 ###

@@ -219,6 +219,19 @@ static async Task<IResult> GetOrderbyId(int id, ClientsDb db)
 
 static async Task<IResult> CreateOrder(Order order, ClientsDb db)
 {
+    var clientExists = await db.Clients.AnyAsync(c => c.Id == order.ClientId);
+    var itemExists = await db.Items.AnyAsync(i => i.Id == order.ItemId);
+
+    if (!clientExists)
+    {
+        return TypedResults.BadRequest($"Client with Id {order.ClientId} does not exist.");
+    }
+
+    if (!itemExists)
+    {
+        return TypedResults.BadRequest($"Item with Id {order.ItemId} does not exist.");
+    }
+
     db.Orders.Add(order);
     await db.SaveChangesAsync();
     return TypedResults.Created($"/orders/{order.Id}", order);
@@ -231,6 +244,8 @@ static async Task<IResult> UpdateOrder(int id, Order inputOrder, ClientsDb db)
     order.ClientId = inputOrder.ClientId;
     order.ItemId = inputOrder.ItemId;
     order.Quantity = inputOrder.Quantity;
+    order.Status = inputOrder.Status;
+    order.Total = inputOrder.Total;
     await db.SaveChangesAsync();
     return TypedResults.NoContent();
 }
