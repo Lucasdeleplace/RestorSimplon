@@ -32,8 +32,6 @@ GET {{RestorSimplon_HostAddress}}/items/2/with-category
 
 ###
 
-
-
 @id=2
 GET {{RestorSimplon_HostAddress}}/categories/{{id}}/with-items
 

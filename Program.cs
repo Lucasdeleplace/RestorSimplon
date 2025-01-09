@@ -53,6 +53,7 @@ orders.MapGet("/", GetAllOrder);
 orders.MapGet("/{id}", GetOrderbyId);
 orders.MapPost("/", CreateOrder);
 orders.MapPut("/{id}", UpdateOrder);
+orders.MapDelete("/{id}", DeleteOrder);
 
 app.Run();
 
