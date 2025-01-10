@@ -14,17 +14,19 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 var app = builder.Build();
 
 app.UseRouting();
+app.MapControllers();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers();
+//});
 
 // ------ Route Client ------ //
 RouteGroupBuilder clients = app.MapGroup("/clients");
 RouteGroupBuilder categories = app.MapGroup("/categories");
 RouteGroupBuilder items = app.MapGroup("/items");
 RouteGroupBuilder orders = app.MapGroup("/orders");
+//RouteGroupBuilder orderItems = app.MapGroup("/orderItems");
 
 clients.MapGet("/", GetAllClients);
 clients.MapGet("/{id}", GetClientbyId);
@@ -54,6 +56,13 @@ orders.MapGet("/{id}", GetOrderbyId);
 orders.MapPost("/", CreateOrder);
 orders.MapPut("/{id}", UpdateOrder);
 orders.MapDelete("/{id}", DeleteOrder);
+
+//// ------ Route OrderItem ------ //
+//orderItems.MapGet("/", GetAllOrderItems);
+//orderItems.MapGet("/{orderId}/{itemId}", GetOrderItemsbyId);
+//orderItems.MapPost("/", CreateOrderItems);
+//orderItems.MapPut("/{id}", UpdateOrderItems);
+//orderItems.MapDelete("/{id}", DeleteOrderItems);
 
 app.Run();
 
@@ -166,6 +175,54 @@ static async Task<IResult> GetItemsbyId(int id, ClientsDb db)
         : TypedResults.NotFound();
 }
 
+//// ------ Route OrderItem ------ //
+
+//static async Task<IResult> GetAllOrderItems(ClientsDb db)
+//{
+//    return TypedResults.Ok(await db.OrderItems.ToArrayAsync());
+//}
+
+//static async Task<IResult> GetOrderItemsbyId(int orderId, int itemId, ClientsDb db)
+//{
+//    return await db.OrderItems.FindAsync(orderId, itemId)
+//        is OrderItem orderItems
+//        ? TypedResults.Ok(orderItems)
+//        : TypedResults.NotFound();
+//}
+
+
+//static async Task<IResult> CreateOrderItems(OrderItem orderItems, ClientsDb db)
+//{
+//    db.OrderItems.Add(orderItems);
+//    await db.SaveChangesAsync();
+//    return TypedResults.Created($"/orderItems/{orderItems.Id}", orderItems);
+//}
+
+
+//static async Task<IResult> UpdateOrderItems(int id, OrderItem inputOrderItems, ClientsDb db)
+//{
+//    var orderItems = await db.OrderItems.FindAsync(id);
+//    if (orderItems is null) return TypedResults.NotFound();
+//    orderItems.OrderId = inputOrderItems.OrderId;
+//    orderItems.ItemId = inputOrderItems.ItemId;
+//    orderItems.Quantity = inputOrderItems.Quantity;
+//    await db.SaveChangesAsync();
+//    return TypedResults.NoContent();
+//}
+
+//static async Task<IResult> DeleteOrderItems(int id, ClientsDb db)
+//{
+//    if (await db.OrderItems.FindAsync(id) is OrderItem orderItems)
+//    {
+//        db.OrderItems.Remove(orderItems);
+//        await db.SaveChangesAsync();
+//        return TypedResults.NoContent();
+//    }
+//    return TypedResults.NotFound();
+//}
+
+
+
 static async Task<IResult> GetItemWithCategory(int id, ClientsDb db)
 {
     var item = await db.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.Id == id);
@@ -219,33 +276,58 @@ static async Task<IResult> GetOrderbyId(int id, ClientsDb db)
 
 static async Task<IResult> CreateOrder(Order order, ClientsDb db)
 {
-    var clientExists = await db.Clients.AnyAsync(c => c.Id == order.ClientId);
-    var itemExists = await db.Items.AnyAsync(i => i.Id == order.ItemId);
 
+    var clientExists = await db.Clients.AnyAsync(c => c.Id == order.ClientId);
     if (!clientExists)
     {
         return TypedResults.BadRequest($"Client with Id {order.ClientId} does not exist.");
     }
 
-    if (!itemExists)
+    var newOrder = new Order
     {
-        return TypedResults.BadRequest($"Item with Id {order.ItemId} does not exist.");
+        ClientId = order.ClientId,
+        Date = order.Date,
+        OrderItems = new List<OrderItem>()
+    };
+
+    db.Orders.Add(newOrder);
+    db.SaveChanges();
+
+ 
+    foreach (var orderItem in order.OrderItems)
+    {
+        var item = await db.Items.FindAsync(orderItem.ItemId);
+        if (item == null)
+        {
+            return TypedResults.BadRequest($"Item with Id {orderItem.ItemId} does not exist.");
+        }
+
+        var newOrderItem = new OrderItem
+        {
+            OrderId = order.Id,
+            ItemId = item.Id,
+            Quantity = orderItem.Quantity,
+        };
+
+        order.OrderItems.Add(newOrderItem);
     }
 
-    db.Orders.Add(order);
-    await db.SaveChangesAsync();
+    order.Total = order.OrderItems.Sum(oi => db.Items.Find(oi.ItemId)!.Price * oi.Quantity); 
+    db.SaveChanges();
     return TypedResults.Created($"/orders/{order.Id}", order);
+  
 }
+
 
 static async Task<IResult> UpdateOrder(int id, Order inputOrder, ClientsDb db)
 {
     var order = await db.Orders.FindAsync(id);
     if (order is null) return TypedResults.NotFound();
     order.ClientId = inputOrder.ClientId;
-    order.ItemId = inputOrder.ItemId;
-    order.Quantity = inputOrder.Quantity;
-    order.Status = inputOrder.Status;
-    order.Total = inputOrder.Total;
+    //order.ItemId = inputOrder.ItemId;
+    //order.Quantity = inputOrder.Quantity;
+    //order.Status = inputOrder.Status;
+    //order.Total = inputOrder.Total;
     await db.SaveChangesAsync();
     return TypedResults.NoContent();
 }
@@ -260,3 +342,4 @@ static async Task<IResult> DeleteOrder(int id, ClientsDb db)
     }
     return TypedResults.NotFound();
 }
+

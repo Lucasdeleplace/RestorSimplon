@@ -7,6 +7,7 @@ class ClientsDb : DbContext
     public DbSet<Categories> Categories => Set<Categories>();
     public DbSet<Items> Items => Set<Items>();
     public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -15,5 +16,17 @@ class ClientsDb : DbContext
             .WithMany()
             .HasForeignKey(i => i.CategoryId)
             .IsRequired();
+
+        modelBuilder.Entity<OrderItem>()
+            .HasOne<Items>()
+            .WithMany()
+            .HasForeignKey(oi => oi.ItemId);
+
+        modelBuilder.Entity<OrderItem>()
+            .HasOne<Order>()
+            .WithMany()
+            .HasForeignKey(o => o.OrderId);
     }
+
+
 }

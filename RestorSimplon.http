@@ -28,29 +28,16 @@ Content-Type: application/json
 
 ###
 
-GET {{RestorSimplon_HostAddress}}/items/2/with-category
+GET {{RestorSimplon_HostAddress}}/items/1/with-category
 
 ###
 
-@id=2
+@id=1
 GET {{RestorSimplon_HostAddress}}/categories/{{id}}/with-items
 
 ###
 
 GET {{RestorSimplon_HostAddress}}/orders
-
-###
-
-POST {{RestorSimplon_HostAddress}}/orders
-Content-Type: application/json
-{
-  "ClientId": 1,
-  "ItemId": 2,
-  "Quantity": 2,
-  "Total": 3.40,
-  "Date": "2025-09-01T00:00:00",
-  "Status": false
-}
 
 ###
 
@@ -71,7 +58,6 @@ Content-Type: application/json
   "ClientId": 1,
   "ItemId": 2,
   "Quantity": 60,
-  "Total": 349.99,
   "Date": "2025-09-01T00:00:00",
   "Status": false
 }
@@ -82,5 +68,21 @@ DELETE {{RestorSimplon_HostAddress}}/orders/{{id}}
 ###
 
 GET {{RestorSimplon_HostAddress}}/orders/1
+
+###
+
+POST {{RestorSimplon_HostAddress}}/orders
+Content-Type: application/json
+
+{
+  "ClientId": 1,
+  "Date": "2025-01-10T13:56:08.167Z",
+  "OrderItems": [
+    {
+      "ItemId": 1,
+      "Quantity": 6
+    }
+  ]
+}
 
 ###
