@@ -21,7 +21,7 @@ POST {{RestorSimplon_HostAddress}}/items
 Content-Type: application/json
 
 {
-  "Name" : "Pates",
+  "Name" : "Frite",
   "Price" : 1.70,
   "CategoryId" : 1
 }
@@ -55,15 +55,26 @@ Content-Type: application/json
 PUT {{RestorSimplon_HostAddress}}/orders/1
 Content-Type: application/json
 {
-  "ClientId": 1,
-  "ItemId": 2,
-  "Quantity": 60,
-  "Date": "2025-09-01T00:00:00",
-  "Status": false
+  "clientId": 1,
+  "date": "2025-01-10T14:33:19.550Z",
+  "orderItems": [
+    {
+      "itemId": 2,
+      "quantity": 2
+    },
+    {
+      "itemId": 1,
+      "quantity": 1
+    },
+    {
+      "itemId": 1,
+      "quantity": 1
+    }
+  ]
 }
 ###
 
-DELETE {{RestorSimplon_HostAddress}}/orders/{{id}}
+DELETE {{RestorSimplon_HostAddress}}/orders/1
 
 ###
 
@@ -75,12 +86,16 @@ POST {{RestorSimplon_HostAddress}}/orders
 Content-Type: application/json
 
 {
-  "ClientId": 1,
-  "Date": "2025-01-10T13:56:08.167Z",
-  "OrderItems": [
+  "clientId": 1,
+  "date": "2025-01-10T14:33:19.550Z",
+  "orderItems": [
     {
-      "ItemId": 1,
-      "Quantity": 6
+      "itemId": 2,
+      "quantity": 2
+    },
+    {
+      "itemId": 1,
+      "quantity": 1
     }
   ]
 }

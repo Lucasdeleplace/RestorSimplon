@@ -22,10 +22,10 @@ class ClientsDb : DbContext
             .WithMany()
             .HasForeignKey(oi => oi.ItemId);
 
-        modelBuilder.Entity<OrderItem>()
-            .HasOne<Order>()
-            .WithMany()
-            .HasForeignKey(o => o.OrderId);
+        modelBuilder.Entity<Order>()
+            .HasMany(o => o.OrderItems)
+            .WithOne()
+            .HasForeignKey(oi => oi.OrderId);
     }
 
 

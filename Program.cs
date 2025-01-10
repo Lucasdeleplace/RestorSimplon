@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
+using Microsoft.OpenApi.Models;
+
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +11,36 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 });
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Todo Api",
+        Version = "v1",
+        Description = "Une API pour gérer une liste de tâches",
+        Contact = new OpenApiContact
+        {
+            Name = "Lucas",
+            Email = "votreemail@example.com",
+            Url = new Uri("https://main.d1w2g83ft87ss3.amplifyapp.com/")
+        }
+    });
+
+    c.EnableAnnotations();
+});
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Todo API V1");
+        c.RoutePrefix = "";
+    });
+}
 
 app.UseRouting();
 app.MapControllers();
@@ -221,8 +250,6 @@ static async Task<IResult> GetItemsbyId(int id, ClientsDb db)
 //    return TypedResults.NotFound();
 //}
 
-
-
 static async Task<IResult> GetItemWithCategory(int id, ClientsDb db)
 {
     var item = await db.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.Id == id);
@@ -294,7 +321,7 @@ static async Task<IResult> CreateOrder(Order order, ClientsDb db)
     db.SaveChanges();
 
  
-    foreach (var orderItem in order.OrderItems)
+    foreach (var orderItem in order.OrderItems.ToList())
     {
         var item = await db.Items.FindAsync(orderItem.ItemId);
         if (item == null)
@@ -309,12 +336,12 @@ static async Task<IResult> CreateOrder(Order order, ClientsDb db)
             Quantity = orderItem.Quantity,
         };
 
-        order.OrderItems.Add(newOrderItem);
+        newOrder.OrderItems.Add(newOrderItem);
     }
 
-    order.Total = order.OrderItems.Sum(oi => db.Items.Find(oi.ItemId)!.Price * oi.Quantity); 
+    newOrder.Total = newOrder.OrderItems.Sum(oi => db.Items.Find(oi.ItemId)!.Price * oi.Quantity); 
     db.SaveChanges();
-    return TypedResults.Created($"/orders/{order.Id}", order);
+    return TypedResults.Created($"/orders/{order.Id}", newOrder);
   
 }
 
@@ -324,10 +351,6 @@ static async Task<IResult> UpdateOrder(int id, Order inputOrder, ClientsDb db)
     var order = await db.Orders.FindAsync(id);
     if (order is null) return TypedResults.NotFound();
     order.ClientId = inputOrder.ClientId;
-    //order.ItemId = inputOrder.ItemId;
-    //order.Quantity = inputOrder.Quantity;
-    //order.Status = inputOrder.Status;
-    //order.Total = inputOrder.Total;
     await db.SaveChangesAsync();
     return TypedResults.NoContent();
 }
