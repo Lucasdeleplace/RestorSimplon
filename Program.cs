@@ -51,10 +51,10 @@ app.MapControllers();
 //});
 
 // ------ Route Client ------ //
-RouteGroupBuilder clients = app.MapGroup("/clients");
-RouteGroupBuilder categories = app.MapGroup("/categories");
-RouteGroupBuilder items = app.MapGroup("/items");
-RouteGroupBuilder orders = app.MapGroup("/orders");
+RouteGroupBuilder clients = app.MapGroup("/clients").WithTags("Clients");
+RouteGroupBuilder categories = app.MapGroup("/categories").WithTags("Categories");
+RouteGroupBuilder items = app.MapGroup("/items").WithTags("Items");
+RouteGroupBuilder orders = app.MapGroup("/orders").WithTags("Orders");
 //RouteGroupBuilder orderItems = app.MapGroup("/orderItems");
 
 clients.MapGet("/", GetAllClients);
