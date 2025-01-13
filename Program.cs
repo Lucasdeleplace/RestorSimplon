@@ -53,8 +53,8 @@ RouteGroupBuilder orders = app.MapGroup("/orders").WithTags("Orders");
 
 clients.MapGet("/", GetAllClients)
    .WithMetadata(new SwaggerOperationAttribute(
-        summary: "Récupère tous les éléments clients",
-        description: "Renvois une liste de tous les éléments clients."))
+        summary: "Récupère tous les éléments des clients",
+        description: "Renvois une liste de tous les éléments des clients."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Liste d'éléments clients trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Aucun élément clients non trouvés"));
 clients.MapGet("/{id}", GetClientbyId)
@@ -66,58 +66,58 @@ clients.MapGet("/{id}", GetClientbyId)
 
 clients.MapPost("/", CreateClients)
        .WithMetadata(new SwaggerOperationAttribute(
-        summary: "Créer tous les éléments client",
-        description: "Créer une liste de tous les éléments client."))
+        summary: "Créer tous les éléments d'un client",
+        description: "Créer une liste de tous les éléments d'un client."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Création d'éléments clients trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Aucun création clients non trouvés"));
 clients.MapPut("/{id}", UpdateClients)
      .WithMetadata(new SwaggerOperationAttribute(
-        summary: "mettre à jour tous les éléments client",
-        description: "mets à jour une liste de tous les éléments client."))
+        summary: "mettre à jour tous les éléments d'un client",
+        description: "mets à jour une liste de tous les éléments d'un client."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Mise à jour d'éléments clients trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Aucun mise à jour clients non trouvés"));
 clients.MapDelete("/{id}", DeleteClients)
 .WithMetadata(new SwaggerOperationAttribute(
-        summary: "supprimer tous les éléments client",
-        description: "Supprimer une liste de tous les éléments client."))
+        summary: "supprimer tous les éléments d'un client",
+        description: "Supprimer une liste de tous les éléments d'un client."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Suppression d'éléments clients trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Supression clients non trouvés"));
 clients.MapGet("/{id}/with-order", GetClientWithOrder)
     .WithMetadata(new SwaggerOperationAttribute(
-        summary: "Récupère tous les éléments client avec ses commandes",
-        description: "Recupere une liste de tous les éléments client avec leurs commandes."))
+        summary: "Récupère tous les éléments d'un client avec ses commandes",
+        description: "Recupere une liste de tous les éléments d'un client avec leurs commandes."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Liste d'éléments clients avec leurs commandes trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Aucun clients avec leurs commandes non trouvés"));
 
 // ------ Route Category ------ //
 categories.MapGet("/", GetAllCategories)
 .WithMetadata(new SwaggerOperationAttribute(
-        summary: "Récupère tous les éléments catégories",
-        description: "Renvois une liste de tous les éléments catégories."))
+        summary: "Récupère tous les éléments des catégories",
+        description: "Renvois une liste de tous les éléments des catégories."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Liste d'éléments catégories trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Aucun élément catégories non trouvés"));
 categories.MapGet("/{id}", GetCategoriesbyId)
 .WithMetadata(new SwaggerOperationAttribute(
-        summary: "Récupère tous les éléments d'un catégorie via son ID",
-        description: "Renvois une liste de tout les éléments d'un catégorie."))
+        summary: "Récupère tous les éléments d'une catégorie via son ID",
+        description: "Renvois une liste de tout les éléments d'une catégorie."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Liste d'éléments catégorie trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Aucun élément catégorie non trouvés"));
 categories.MapPost("/", CreateCategories)
  .WithMetadata(new SwaggerOperationAttribute(
-        summary: "Créer tous les éléments catégories",
-        description: "Créer une liste de tous les éléments catégories."))
+        summary: "Créer tous les éléments d'une catégorie",
+        description: "Créer une liste de tous les éléments d'une catégorie."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Création d'éléments catégories trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Aucun création catégories non trouvés"));
 categories.MapPut("/{id}", UpdateCategories)
  .WithMetadata(new SwaggerOperationAttribute(
-        summary: "mettre à jour tous les éléments catégories",
-        description: "mets à jour une liste de tous les éléments catégories."))
+        summary: "mettre à jour tous les éléments d'une catégorie",
+        description: "mets à jour une liste de tous les éléments d'une catégorie."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Mise à jour d'éléments catégories trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Mise à jour catégories non trouvés"));
 categories.MapDelete("/{id}", DeleteCategories)
     .WithMetadata(new SwaggerOperationAttribute(
-    summary: "supprimer tous les éléments catégories",
-        description: "Supprimer une liste de tous les éléments catégories."))
+    summary: "supprimer tous les éléments d'une catégorie",
+        description: "Supprimer une liste de tous les éléments d'une catégorie."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Suppression d'éléments catégories trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Supression catégories non trouvés"));
 categories.MapGet("/{id}/with-items", GetCategoryWithItems)
@@ -148,14 +148,14 @@ items.MapPost("/", CreateItems)
     .WithMetadata(new SwaggerResponseAttribute(404, "Aucun création items non trouvés"));
 items.MapPut("/{id}", UpdateItems)
      .WithMetadata(new SwaggerOperationAttribute(
-        summary: "mettre à jour tous les éléments items",
-        description: "mets à jour une liste de tous les éléments item."))
-    .WithMetadata(new SwaggerResponseAttribute(200, "Mise à jour d'éléments item trouvés"))
-    .WithMetadata(new SwaggerResponseAttribute(404, "Mise à jour item non trouvés"));
+        summary: "mettre à jour tous les éléments d'un items",
+        description: "mets à jour une liste de tous les éléments d'un item."))
+    .WithMetadata(new SwaggerResponseAttribute(200, "Mise à jour d'éléments d'un item trouvés"))
+    .WithMetadata(new SwaggerResponseAttribute(404, "Mise à jour d'un item non trouvés"));
 items.MapDelete("/{id}", DeleteItems)
      .WithMetadata(new SwaggerOperationAttribute(
-    summary: "supprimer tous les éléments item",
-        description: "Supprimer une liste de tous les éléments item."))
+    summary: "supprimer tous les éléments d'un item",
+        description: "Supprimer une liste de tous les éléments d'un item."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Suppression d'éléments item trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Supression item non trouvés"));
 items.MapGet("/{id}/with-category", GetItemWithCategory)
@@ -168,10 +168,10 @@ items.MapGet("/{id}/with-category", GetItemWithCategory)
 // ------ Route Order ------ //   
 orders.MapGet("/", GetAllOrder)
     .WithMetadata(new SwaggerOperationAttribute(
-        summary: "Récupère tous les éléments commandes",
-        description: "Renvois une liste de tous les éléments commandes."))
-    .WithMetadata(new SwaggerResponseAttribute(200, "Liste d'élément commandes trouvés"))
-    .WithMetadata(new SwaggerResponseAttribute(404, "Aucun élément commandes non trouvés"));
+        summary: "Récupère tous les éléments des commandes",
+        description: "Renvois une liste de tous les éléments des commandes."))
+    .WithMetadata(new SwaggerResponseAttribute(200, "Liste des éléments des commandes trouvés"))
+    .WithMetadata(new SwaggerResponseAttribute(404, "Aucun élément des commandes non trouvés"));
 orders.MapGet("/{id}", GetOrderbyId)
     .WithMetadata(new SwaggerOperationAttribute(
         summary: "Récupère tous les éléments d'une commande via son ID",
@@ -180,20 +180,20 @@ orders.MapGet("/{id}", GetOrderbyId)
     .WithMetadata(new SwaggerResponseAttribute(404, "Aucun élément commande non trouvés"));
 orders.MapPost("/", CreateOrder)
      .WithMetadata(new SwaggerOperationAttribute(
-        summary: "Créer tous les commande items",
-        description: "Créer une liste de tous les commande items."))
+        summary: "Créer une commande ",
+        description: "Créer une liste d'une commande."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Création d'éléments catégorie trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Aucun création catégorie non trouvés"));
 orders.MapPut("/{id}", UpdateOrder)
      .WithMetadata(new SwaggerOperationAttribute(
-        summary: "mettre à jour tous les éléments commande",
-        description: "mets à jour une liste de tous les éléments commande."))
+        summary: "mettre à jour tous les éléments d'une commande",
+        description: "mets à jour une liste de tous les éléments d'une commande."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Mise à jour d'éléments commande trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Mise à jour commande non trouvés"));
 orders.MapDelete("/{id}", DeleteOrder)
    .WithMetadata(new SwaggerOperationAttribute(
-    summary: "supprimer tous les éléments commandes",
-        description: "Supprimer une liste de tous les éléments commandes."))
+    summary: "supprimer tous les éléments d'une commande",
+        description: "Supprimer une liste de tous les éléments d'une commande."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Suppression d'éléments commandes trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Supression commandes non trouvés"));
 
