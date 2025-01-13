@@ -4,11 +4,12 @@ GET {{RestorSimplon_HostAddress}}/categories
 
 ###
 
+
 POST {{RestorSimplon_HostAddress}}/categories
 Content-Type: application/json
 
 {
-  "Category_Name" : "Diner"
+  "Category_Name" : "Dejeuner"
 }
 
 ###
@@ -21,7 +22,7 @@ POST {{RestorSimplon_HostAddress}}/items
 Content-Type: application/json
 
 {
-  "Name" : "Frite",
+  "Name" : "Pates",
   "Price" : 1.70,
   "CategoryId" : 1
 }
@@ -99,5 +100,10 @@ Content-Type: application/json
     }
   ]
 }
+
+###
+
+
+GET {{RestorSimplon_HostAddress}}/clients/{{id}}/with-order
 
 ###

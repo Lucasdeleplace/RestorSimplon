@@ -12,10 +12,8 @@ class ClientsDb : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Categories>()
-           
-            .HasOne(i => i.Items)
-            .WithMany()
-            // erreur gestion clé étranger entre catégorie et Item 
+            .HasMany(c => c.Items)
+            .WithOne()
             .HasForeignKey(i => i.CategoryId)
             .IsRequired();
 
@@ -28,7 +26,10 @@ class ClientsDb : DbContext
             .HasMany(o => o.OrderItems)
             .WithOne()
             .HasForeignKey(oi => oi.OrderId);
+
+        modelBuilder.Entity<Order>()
+            .HasOne<Clients>()
+            .WithMany()
+            .HasForeignKey(o => o.ClientId);
     }
-
-
 }

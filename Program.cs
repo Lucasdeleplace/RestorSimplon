@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-
+using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,6 +62,7 @@ clients.MapGet("/{id}", GetClientbyId);
 clients.MapPost("/", CreateClients);
 clients.MapPut("/{id}", UpdateClients);
 clients.MapDelete("/{id}", DeleteClients);
+clients.MapGet("/{id}/with-order", GetClientWithOrder);
 
 // ------ Route Category ------ //
 categories.MapGet("/", GetAllCategories);
@@ -138,6 +139,32 @@ static async Task<IResult> DeleteClients(int id, ClientsDb db)
         return TypedResults.NoContent();
     }
     return TypedResults.NotFound();
+}
+
+static async Task<IResult> GetClientWithOrder(int id, ClientsDb db)
+{
+    var orders = await db.Orders.Where(o => o.ClientId == id).ToListAsync();
+    var client = await db.Clients.FindAsync(id);
+    if (client is null) return TypedResults.NotFound();
+    client.Orders = orders;
+    var itemOrder = await db.OrderItems.ToListAsync();
+    foreach (var order in orders)
+    {
+        order.OrderItems = itemOrder.Where(oi => oi.OrderId == order.Id).ToList();
+    }
+    var items = new List<Items>();
+    foreach (var order in orders)
+    {
+        foreach (var orderItem in order.OrderItems)
+        {
+            var item = await db.Items.FindAsync(orderItem.ItemId);
+            if (item != null)
+            {
+                items.Add(item);
+            }
+        }
+    }
+    return TypedResults.Ok(new { client, items });
 }
 
 // Function Categories
@@ -252,8 +279,11 @@ static async Task<IResult> GetItemsbyId(int id, ClientsDb db)
 
 static async Task<IResult> GetItemWithCategory(int id, ClientsDb db)
 {
-    var item = await db.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.Id == id);
-    return item is not null ? TypedResults.Ok(item) : TypedResults.NotFound();
+    var item = await db.Items.FindAsync(id);
+    if (item == null) return TypedResults.NotFound();
+
+    var categories = await db.Categories.Where(c => c.Id == item.CategoryId).ToListAsync();
+    return TypedResults.Ok(new { categories });
 }
 
 static async Task<IResult> CreateItems(Items items, ClientsDb db)
