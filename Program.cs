@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,17 +45,11 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.MapControllers();
 
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapControllers();
-//});
-
 // ------ Route Client ------ //
 RouteGroupBuilder clients = app.MapGroup("/clients").WithTags("Clients");
 RouteGroupBuilder categories = app.MapGroup("/categories").WithTags("Categories");
 RouteGroupBuilder items = app.MapGroup("/items").WithTags("Items");
 RouteGroupBuilder orders = app.MapGroup("/orders").WithTags("Orders");
-//RouteGroupBuilder orderItems = app.MapGroup("/orderItems");
 
 clients.MapGet("/", GetAllClients)
    .WithMetadata(new SwaggerOperationAttribute(
@@ -203,12 +196,6 @@ orders.MapDelete("/{id}", DeleteOrder)
         description: "Supprimer une liste de tous les éléments commandes."))
     .WithMetadata(new SwaggerResponseAttribute(200, "Suppression d'éléments commandes trouvés"))
     .WithMetadata(new SwaggerResponseAttribute(404, "Supression commandes non trouvés"));
-//// ------ Route OrderItem ------ //
-//orderItems.MapGet("/", GetAllOrderItems);
-//orderItems.MapGet("/{orderId}/{itemId}", GetOrderItemsbyId);
-//orderItems.MapPost("/", CreateOrderItems);
-//orderItems.MapPut("/{id}", UpdateOrderItems);
-//orderItems.MapDelete("/{id}", DeleteOrderItems);
 
 app.Run();
 
@@ -299,8 +286,6 @@ static async Task<IResult> GetCategoriesbyId(int id, ClientsDb db)
 
 static async Task<IResult> GetCategoryWithItems(int id, ClientsDb db)
 {
-    //var category = await db.Categories.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == id);
-    //return category is not null ? TypedResults.Ok(category) : TypedResults.NotFound();
     var items = await db.Items.Where(i => i.CategoryId == id).ToListAsync();
     return TypedResults.Ok(items);
 }
@@ -346,53 +331,6 @@ static async Task<IResult> GetItemsbyId(int id, ClientsDb db)
         ? TypedResults.Ok(items)
         : TypedResults.NotFound();
 }
-
-//// ------ Route OrderItem ------ //
-
-//static async Task<IResult> GetAllOrderItems(ClientsDb db)
-//{
-//    return TypedResults.Ok(await db.OrderItems.ToArrayAsync());
-//}
-
-//static async Task<IResult> GetOrderItemsbyId(int orderId, int itemId, ClientsDb db)
-//{
-//    return await db.OrderItems.FindAsync(orderId, itemId)
-//        is OrderItem orderItems
-//        ? TypedResults.Ok(orderItems)
-//        : TypedResults.NotFound();
-//}
-
-
-//static async Task<IResult> CreateOrderItems(OrderItem orderItems, ClientsDb db)
-//{
-//    db.OrderItems.Add(orderItems);
-//    await db.SaveChangesAsync();
-//    return TypedResults.Created($"/orderItems/{orderItems.Id}", orderItems);
-//}
-
-
-//static async Task<IResult> UpdateOrderItems(int id, OrderItem inputOrderItems, ClientsDb db)
-//{
-//    var orderItems = await db.OrderItems.FindAsync(id);
-//    if (orderItems is null) return TypedResults.NotFound();
-//    orderItems.OrderId = inputOrderItems.OrderId;
-//    orderItems.ItemId = inputOrderItems.ItemId;
-//    orderItems.Quantity = inputOrderItems.Quantity;
-//    await db.SaveChangesAsync();
-//    return TypedResults.NoContent();
-//}
-
-//static async Task<IResult> DeleteOrderItems(int id, ClientsDb db)
-//{
-//    if (await db.OrderItems.FindAsync(id) is OrderItem orderItems)
-//    {
-//        db.OrderItems.Remove(orderItems);
-//        await db.SaveChangesAsync();
-//        return TypedResults.NoContent();
-//    }
-//    return TypedResults.NotFound();
-//}
-
 static async Task<IResult> GetItemWithCategory(int id, ClientsDb db)
 {
     var item = await db.Items.FindAsync(id);
