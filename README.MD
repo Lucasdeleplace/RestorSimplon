@@ -13,7 +13,7 @@ RestorSimplonAPI est une API développée en .NET 9 pour gérer des commandes de cl
 1. Clonez le dépôt :
 ```
 git clone https://github.com/lucasdeleplace/restorsimplon.git
-cd restorsimplonapi
+cd restorsimplon
 ```
 
 2. Ouvrez le projet dans Visual Studio 2022.
