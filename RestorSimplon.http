@@ -1,5 +1,109 @@
 ﻿@RestorSimplon_HostAddress = https://localhost:7265
 
-GET {{RestorSimplon_HostAddress}}/clients
+GET {{RestorSimplon_HostAddress}}/categories
+
+###
+
+
+POST {{RestorSimplon_HostAddress}}/categories
+Content-Type: application/json
+
+{
+  "Category_Name" : "Dejeuner"
+}
+
+###
+
+GET {{RestorSimplon_HostAddress}}/items
+
+###
+
+POST {{RestorSimplon_HostAddress}}/items
+Content-Type: application/json
+
+{
+  "Name" : "Pates",
+  "Price" : 1.70,
+  "CategoryId" : 1
+}
+
+###
+
+GET {{RestorSimplon_HostAddress}}/items/1/with-category
+
+###
+
+@id=1
+GET {{RestorSimplon_HostAddress}}/categories/{{id}}/with-items
+
+###
+
+GET {{RestorSimplon_HostAddress}}/orders
+
+###
+
+POST {{RestorSimplon_HostAddress}}/clients
+Content-Type: application/json
+{
+  "First_Name": "Jody",
+  "Last_Name": "Jody",
+  "Address": "12 rue de la paix",
+  "Phone_Number": "0607080910"
+}
+
+###
+
+PUT {{RestorSimplon_HostAddress}}/orders/1
+Content-Type: application/json
+{
+  "clientId": 1,
+  "date": "2025-01-10T14:33:19.550Z",
+  "orderItems": [
+    {
+      "itemId": 2,
+      "quantity": 2
+    },
+    {
+      "itemId": 1,
+      "quantity": 1
+    },
+    {
+      "itemId": 1,
+      "quantity": 1
+    }
+  ]
+}
+###
+
+DELETE {{RestorSimplon_HostAddress}}/orders/1
+
+###
+
+GET {{RestorSimplon_HostAddress}}/orders/1
+
+###
+
+POST {{RestorSimplon_HostAddress}}/orders
+Content-Type: application/json
+
+{
+  "clientId": 1,
+  "date": "2025-01-10T14:33:19.550Z",
+  "orderItems": [
+    {
+      "itemId": 2,
+      "quantity": 2
+    },
+    {
+      "itemId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+###
+
+
+GET {{RestorSimplon_HostAddress}}/clients/{{id}}/with-order
 
 ###
