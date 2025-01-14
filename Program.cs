@@ -2,16 +2,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json.Serialization;
-
+//Créer un constructeur d'application (builder) avec les arguments de ligne de commande.
 var builder = WebApplication.CreateBuilder(args);
-
+//Ajouter un contexte de base de données (`ClientsDb`) et le configurer pour utiliser SQLite avec un fichier nommé `RestoSimplon.db`.
 builder.Services.AddDbContext<ClientsDb>(opt => opt.UseSqlite("Data Source=RestoSimplon.db"));
 
+//Ajoute du support des contrôleurs avec une configuration JSON pour gérer les références dans les sérialisations.
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 });
+//Ajoute des outils pour documenter l'API avec Swagger (exploration et génération de documentation).
 builder.Services.AddEndpointsApiExplorer();
+//Définir une documentation pour l'API (titre, version, description, contact, etc.).
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -29,9 +32,9 @@ builder.Services.AddSwaggerGen(c =>
 
     c.EnableAnnotations();
 });
-
 var app = builder.Build();
 
+//Construire l'application avec les services configurés.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -41,16 +44,18 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "";
     });
 }
-
+//Configurer le routage
 app.UseRouting();
 app.MapControllers();
 
-// ------ Route Client ------ //
+// configuration des routes et endPoint 
 RouteGroupBuilder clients = app.MapGroup("/clients").WithTags("Clients");
 RouteGroupBuilder categories = app.MapGroup("/categories").WithTags("Categories");
 RouteGroupBuilder items = app.MapGroup("/items").WithTags("Items");
 RouteGroupBuilder orders = app.MapGroup("/orders").WithTags("Orders");
 
+// ------ Route Client ------ //
+// utilisation de swagger afin de déterminer le role de chaques routes pour les clients 
 clients.MapGet("/", GetAllClients)
    .WithMetadata(new SwaggerOperationAttribute(
         summary: "Récupère tous les éléments clients",
@@ -198,75 +203,106 @@ orders.MapDelete("/{id}", DeleteOrder)
     .WithMetadata(new SwaggerResponseAttribute(404, "Supression commandes non trouvés"));
 
 app.Run();
-
+// Fonction pour afficher tout les clients
 static async Task<IResult> GetAllClients(ClientsDb db)
 {
+    // Exécute une requête pour récupérer tous les enregistrements de la table Clients
+    // et les retourne sous forme de tableau.
     return TypedResults.Ok(await db.Clients.ToArrayAsync());
 }
-
+// Fonction pour afficher un client par son Id.
 static async Task<IResult> GetClientbyId(int id, ClientsDb db)
 {
+    // Cherche un enregistrement dans la table Clients correspondant à l'ID.
     return await db.Clients.FindAsync(id)
+        // Vérifie si le résultat n'est pas null 
         is Clients clients
+            // Si un client est trouvé, retourne une réponse HTTP 200 avec les données du client.
             ? TypedResults.Ok(clients)
+            // Si aucun client n'est trouvé, retourne une réponse HTTP 404.
             : TypedResults.NotFound();
 }
-
+// Fonction pour créer un client 
 static async Task<IResult> CreateClients(Clients clients, ClientsDb db)
 {
+    // ajout une nouvelle instance Clients à la base de données 
     db.Clients.Add(clients);
+    // Enregistre les modifiactions apportées dans la base de données 
     await db.SaveChangesAsync();
+    // Retourne une réponse si la création est un succès 
     return TypedResults.Created($"/clients/{clients.Id}", clients);
 }
-
+// Fonction pour modifier un client
 static async Task<IResult> UpdateClients(int id, Clients inputClients, ClientsDb db)
 {
+    // Recherche un client dans la base de données en utilisant L'Id.
     var client = await db.Clients.FindAsync(id);
+    // Vérifie si le client existe. Sinon, retourne un message d'erreur.
     if (client is null) return TypedResults.NotFound();
 
+    // met à jour par rapport aux inputs renseigner dans clients
     client.First_Name = inputClients.First_Name;
     client.Last_Name = inputClients.Last_Name;
     client.Address = inputClients.Address;
     client.Phone_Number = inputClients.Phone_Number;
 
+    // Enregistre les modifiactions apportées dans la base de données 
     await db.SaveChangesAsync();
+    // Retourne une réponse si la mise à jour est un succès 
     return TypedResults.NoContent();
 }
 
+// Fonction pour supprimer un client
 static async Task<IResult> DeleteClients(int id, ClientsDb db)
 {
+    // Recherche un client dans la base de données en utilisant L'Id.
     if (await db.Clients.FindAsync(id) is Clients clients)
     {
+        // supprime le client de la base de données
         db.Clients.Remove(clients);
+        // Enregistre la suppression apportées dans la base de données
         await db.SaveChangesAsync();
+        // Retourne une réponse si la suppresion est un succès
         return TypedResults.NoContent();
     }
+    // Retourne une réponse d'erreur si la suppresion n'est pas succès
     return TypedResults.NotFound();
 }
-
+// Fonction pour afficher un client avec ses commandes
 static async Task<IResult> GetClientWithOrder(int id, ClientsDb db)
 {
+    // Recherche toutes les commandes associées au client dans la base de données en utilisant L'Id.
     var orders = await db.Orders.Where(o => o.ClientId == id).ToListAsync();
+    // Recherche un client dans la base de données en utilisant L'Id.
     var client = await db.Clients.FindAsync(id);
+    // vérifiacation du client si il n'est pas trouver retour d'un message d'erreur
     if (client is null) return TypedResults.NotFound();
+    // Associe les commandes récupérées au client.
     client.Orders = orders;
+    // récupère tous les OrderItems 
     var itemOrder = await db.OrderItems.ToListAsync();
+    // asocie les articles de commande à leurs commandes respectives
     foreach (var order in orders)
     {
         order.OrderItems = itemOrder.Where(oi => oi.OrderId == order.Id).ToList();
     }
+    // Liste pour stocker les articles associés aux commandes.
     var items = new List<Items>();
+    // parcourt les commandes pour récupérer les articles correspondants 
     foreach (var order in orders)
     {
         foreach (var orderItem in order.OrderItems)
         {
+            // Recherche les détails de chaque article à l'aide de son ID
             var item = await db.Items.FindAsync(orderItem.ItemId);
+            // Si l'article existe, il est ajouté à la liste.
             if (item != null)
             {
                 items.Add(item);
             }
         }
     }
+    // Retourne une réponse contenant les détails du client et des articles.
     return TypedResults.Ok(new { client, items });
 }
 
